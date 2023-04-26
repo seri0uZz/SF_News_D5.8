@@ -1,0 +1,30 @@
+{% extends 'default.html' %}
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+новость № {{ post.id }}
+{% endblock title %}
+
+{% block content %}
+<h2>новость № {{ post.id }}</h2>
+
+<h1>{{ post.title|censor }}</h1>
+<h4>дата публикации {{ post.dateCreation|date:'d.m.Y' }}</h4>
+<p>{{ post.text|censor }}</p>
+<h5>автор: {{ post.author }}</h5>
+
+{% if perms.news.post_delete %}
+<p class="text-normal fs-12">
+    <a href="{% url 'post_delete' post.id %}" class="btn-secondary btn-sm">Удалить</a>
+</p>
+{% endif %}
+
+{% if perms.news.post_update %}
+<p class="text-normal fs-22">
+    <a href="{% url 'post_update' post.id %}" class="btn-secondary btn-sm">Редактировать</a></p>
+{% endif %}
+
+
+        {% endblock content %}

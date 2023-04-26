@@ -1,0 +1,59 @@
+{% extends 'default.html' %}
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}Поиск{% endblock title %}
+
+{% block content %}
+<h1>Поиск новостей и статей</h1>
+
+<form action="" method="get">
+    {{ filterset.form.as_p }}
+    <input type="submit" value="Найти"/>
+</form>
+
+<hr>
+{% if search_page %}
+
+<ul class="list-group list-group-flush">
+    {% for news in search_page %}
+    <li class="list-group-item">
+        <h6 align="left"<small class="text-muted">{{ news.dateCreation|date:'d.m.Y' }}</small> <br>
+        <h6 align="left"<small class="fw-bold">
+        <a href="{% url 'post' news.id %}">{{ news.title | censor }} </a></small> <br>
+        <tr>
+            <small class="fw-bold">категория:
+            {% for category in news.postCategory.all %}
+            {{ category.name }}
+            {% endfor %}
+            </small>
+            <p align="left">{{ news.text | truncatechars:210 }}</p>
+    </li>
+    {% endfor %}
+</ul>
+
+
+{% else %}
+<h1>Новости не найдены</h1>
+{% endif %}
+
+{% if page_obj.has_previous %}
+{# Для каждой ссылки пагинации указываем обработку через новый тег #}
+<a href="?{% url_replace page=1 %}">1</a>
+{% if page_obj.previous_page_number != 1 %}
+...
+<a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+{% endif %}
+{% endif %}
+
+{{ page_obj.number }}
+
+{% if page_obj.has_next %}
+<a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+{% if paginator.num_pages != page_obj.next_page_number %}
+...
+<a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+{% endif %}
+{% endif %}
+
+{% endblock content %}
